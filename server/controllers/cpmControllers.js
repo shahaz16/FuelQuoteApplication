@@ -1,3 +1,5 @@
+import cpmSchema from "../models/cpm.js";
+import userSchema from "../models/user.js";
 
 export const createCPM = async (req, res) => {
     try {
@@ -81,10 +83,44 @@ export const createCPM = async (req, res) => {
                 });
         }
 
-       return res.status(200).json({ message: "CPM created successfully" });
+        delete req.body.user_id;
+
+        const newCpm = new cpmSchema(req.body);
+        await newCpm.save();
+
+        const user = await userSchema.findOne({ _id: user_id });
+
+        await user.updateOne({ $set: { cpm_id: newCpm._id } });
+
+        res.status(200).json({
+            address1: newCpm.address1,
+            address2: newCpm.address2,
+            city: newCpm.city,
+            state: newCpm.state,
+            zipcode: newCpm.zipcode,
+            user_id: newCpm.user_id,
+            _id: newCpm._id,
+            userId: user._id,
+        });
     } catch (error) {
         res.status(400).json({ error });
     }
 };
 
+export const getCPM = async (req, res) => {
+    try {
+        const cpm = await cpmSchema.find();
+        res.status(200).json(cpm);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
 
+export const getCPMById = async (req, res) => {
+    try {
+        const cpm = await cpmSchema.findOne({ _id: req.params.id });
+        res.status(200).json(cpm);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
