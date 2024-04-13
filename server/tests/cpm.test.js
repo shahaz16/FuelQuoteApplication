@@ -7,6 +7,8 @@ describe("CPM Tests", () => {
         expect(true).toEqual(true);
     })
 
+  
+
     describe("validate name", () => {
     
         test("should check if name is a string", async () => {
@@ -102,7 +104,7 @@ describe("CPM Tests", () => {
                 address1: "123 Main St",
                 city: "Houston",
                 state: "TX",
-                zipcode: 44333
+                zipcode: 77333
             })
             expect(response.status).toEqual(400)
             expect(response.body.message).toEqual("Name must be less than 50 characters")
@@ -114,7 +116,7 @@ describe("CPM Tests", () => {
                 address1: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
                 city: "Houston",
                 state: "TX",
-                zipcode: 44333
+                zipcode: 77333
             })
             expect(response.status).toEqual(400)
             expect(response.body.message).toEqual("Address 1 must be less than 100 characters")
@@ -127,7 +129,7 @@ describe("CPM Tests", () => {
                 address2: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCD",
                 city: "Houston",
                 state: "TX",
-                zipcode: 44333
+                zipcode: 77333
             })
             expect(response.status).toEqual(400)
             expect(response.body.message).toEqual("Address 2 must be less than 100 characters")
@@ -139,7 +141,7 @@ describe("CPM Tests", () => {
                 address1: "123 Main St",
                 city: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCD",
                 state: "TX",
-                zipcode: 44333
+                zipcode: 77333
             })
             expect(response.status).toEqual(400)
             expect(response.body.message).toEqual("City must be less than 100 characters")
@@ -151,7 +153,7 @@ describe("CPM Tests", () => {
                 address1: "123 Main St",
                 city: "Houston",
                 state: "TXTX",
-                zipcode: 44333
+                zipcode: 77333
             })
             expect(response.status).toEqual(400)
             expect(response.body.message).toEqual("State must be less than 2 characters")
@@ -163,11 +165,13 @@ describe("CPM Tests", () => {
         //         address1: "123 Main St",
         //         city: "Houston",
         //         state: "TX",
-        //         zipcode: "123"
+        //         zipcode: 1230
         //     })
         //     expect(response.status).toEqual(400)
         //     expect(response.body.message).toEqual("Zipcode must be less than 9 characters and greater than 5 characters")
-        // })
+        // }, 50000)
+
+        // // Add a timeout value to this test to increase the timeout
 
         // test("should return 200 if all fields are valid", async () => {
         //     const response = await request(app).post("/api/create").send({
@@ -175,10 +179,10 @@ describe("CPM Tests", () => {
         //         address1: "123 Main St",
         //         city: "Houston",
         //         state: "TX",
-        //         zipcode: 23444
+        //         zipcode: 77333
         //     })
         //     expect(response.status).toEqual(200)
-        //     expect(response.body.message).toEqual("CPM created successfully")
+        //     expect(response.body.message).toEqual("Account created successfully")
         // })
 
     })
