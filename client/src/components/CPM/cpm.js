@@ -1,5 +1,6 @@
 import React from "react";
-
+import axios from "axios";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import "./cpm.css"
@@ -7,6 +8,49 @@ import "./cpm.css"
 const CPM = () => {
 
     const navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const [cpmInfo, setCpmInfo] = useState({
+        name: "",
+        address1: "",
+        address2: "",
+        city: "",
+        state: "",
+        zipcode: 0,
+        user_id: user.user_id,
+    });
+
+    const handleChange = (e) => {
+        setCpmInfo({
+            ...cpmInfo,
+            [e.target.id]: e.target.value
+        });
+    };
+
+    const handleChangeInt = (e) => {
+        setCpmInfo({
+            ...cpmInfo,
+            [e.target.id]: parseInt(e.target.value)
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:5500/api/create", cpmInfo);
+
+            localStorage.setItem("cpm", JSON.stringify(response.data));
+
+            navigate("/fuelprice");
+
+        } catch (error) {
+            console.log("in catch");
+            console.log(error);
+        }
+    };
+
+
 
 
     return (
@@ -19,6 +63,7 @@ const CPM = () => {
                     placeholder="Full Name"
                     id="name"
                     className="rInput"
+                    onChange={handleChange}
                     maxLength="50"
                     required
                 />
@@ -30,6 +75,7 @@ const CPM = () => {
                     placeholder="Address 1"
                     id="address1"
                     className="rInput"
+                    onChange={handleChange}
                     maxLength="100"
                     required
                 />
@@ -38,9 +84,10 @@ const CPM = () => {
             <label htmlFor="address2">Address 2:
                 <input
                     type="text"
-                    placeholder="Address 2"
+                    placeholder="Adress 2"
                     id="address2"
                     className="rInput"
+                    onChange={handleChange}
                     maxLength="100"
                 />
             </label><br />
@@ -51,6 +98,7 @@ const CPM = () => {
                     placeholder="City"
                     id="city"
                     className="rInput"
+                    onChange={handleChange}
                     maxLength="100"
                     required
                 />
@@ -59,6 +107,7 @@ const CPM = () => {
             <label htmlFor="State">State:
                 <select name="state"
                     required
+                    onChange={handleChange}
                     id="state"
                 >
                     <option value="">Select a State</option>
@@ -122,6 +171,7 @@ const CPM = () => {
                     placeholder="zip code"
                     id="zipcode"
                     className="rInput"
+                    onChange={handleChangeInt}
                     minLength="5"
                     maxLength="9"
                     required
@@ -130,10 +180,8 @@ const CPM = () => {
             <button
                 type="submit"
                 className="submit"
-                onClick={() => {
-                    navigate("/fuelprice");
-                  }}
-                >
+                onClick={handleSubmit}
+                disabled={!(cpmInfo.name && cpmInfo.address1 && cpmInfo.city && cpmInfo.state && cpmInfo.zipcode)}>
                 Submit
             </button>
 
@@ -144,4 +192,3 @@ const CPM = () => {
 }
 
 export default CPM;
-
