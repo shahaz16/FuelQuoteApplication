@@ -7,12 +7,14 @@ import REGISTER from './components/Register/register'
 import FuelPrice from './components/FuelPrice/fuel'
 import CPM from './components/CPM/cpm'
 import HISTORY from './components/FuelQuoteHistory/history'
+import HOMEPAGE from './components/Homepage/HOMEPAGE';
 
 function App() {
   return (
     <Router>
       <Navbar/>
       <Routes>
+      <Route path ="/" element={<HOMEPAGE/>}/>
       <Route  path="/login" element={<LOGIN/>} />
       <Route  path="/register" element={<REGISTER/>} />
       <Route  path="/cpm" element={<CPM/>} />
