@@ -40,6 +40,7 @@ const Login = () => {
 
         alert("Login Successful. Press OK to continue.");
         navigate("/");
+        window.location.reload();
       }
       else {
         alert("Our server indicates that you have not set up your profile yet. Press OK to continue.");
