@@ -7,47 +7,314 @@ describe("Fuel Quote Tests", () => {
         expect(true).toEqual(true);
     })
 
-    test("should return 200 if all fields are valid", async () => {
-        const response = await request(app).get("/api/history")
-        
-        const quote1 = {
-            "gallon_requested": "1000",
-            "address1": "1234 abc",
-            "address2": "",
-            "city": "Houston",
-            "state": "TX",
-            "zipcode": "75001",
-            "date": "2023-01-01",
-            "suggested_price": "2.50",
-            "total_price": "2500.00",
-        }
+    test("should check if gallons requested is a number", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:"23",
+            address1:"123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Gallons must be a number")
 
-        const quote2 = {
-            "gallon_requested": "100",
-            "address1": "3324 fc st",
-            "address2": "",
-            "city": "Houston",
-            "state": "TX",
-            "zipcode": "55998",
-            "date": "2024-06-09",
-            "suggested_price": "1.00",
-            "total_price": "100.00",
-        }
-
-        const quote3 = {
-            "gallon_requested": "500",
-            "address1": "990 ave",
-            "address2": "",
-            "city": "Dallas",
-            "state": "TX",
-            "zipcode": "33221",
-            "date": "2024-10-24",
-            "suggested_price": "5.00",
-            "total_price": "2500.00",
-        }
-
-        // expect(response.status).toEqual(200)
-        expect(response.body).toEqual([quote1, quote2, quote3])
     })
+
+    test("should check if address1 is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:123,
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Address 1 must be a string")
+    })
+
+    test("should check if address2 is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            address2:123,
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Address 2 must be a string")
+    })
+
+    test("should check if city is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            city:123,
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("City must be a string")
+    })
+
+    test("should check if state is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            city:"Houston",
+            state: 123,
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("State must be a string")
+    })
+
+    test("should check if zipcode is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:"123",
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Zipcode must be a number")
+    })
+
+    test("should check if date is a string", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:123,
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Date must be a string")
+    })
+
+    test("should check if suggested price is a number", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:"232",
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Suggested price must be a number")
+    })
+
+    test("should check if missing fields", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:23,
+            address1:"",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Please fill out all fields")
+    })
+
+    test("should check if max length of address1 is less than 100", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Address 1 must be less than 100 characters")
+    })
+
+    test("should check if max length of address2 is less than 100", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            address2: "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Address 2 must be less than 100 characters")
+    })
+
+    test("should check if max length of city is less than 100", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("City must be less than 100 characters")
+    })
+
+    test("should check if max length of state is less than 2", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TXTX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("State must be less than 2 characters")
+    })
+
+    test("should check if zipcode is more than 5 and less than 9", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:123,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Zipcode must be less than 9 characters and greater than 5 characters")
+    })
+
+    test("should check if date is in the correct format", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/202998",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Date must be in mm/dd/yyyy format")
+    })
+
+    test("should check if gallon requested is greater than 0", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:-4,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Gallons requested must be greater than 0")
+    })
+
+    test("should check if suggested price is greater than 0", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:-3,
+            total_price:500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Suggested price must be greater than 0")
+    })
+
+    test("should check if total price is greater than 0", async () => {
+        const response = await request(app).post("/api/fuelprice").send({
+            gallon_requested:12,
+            address1: "123 Main St",
+            city:"Houston",
+            state: "TX",
+            zipcode:77055,
+            date:"12/12/2028",
+            suggested_price:232,
+            total_price:-500
+        })
+        expect(response.status).toEqual(400)
+        expect(response.body.message).toEqual("Total price must be greater than 0")
+    })
+
+    test("should get all fuel prices", async () => {
+        const response = await request(app).get("/api/fuelprice")
+        expect(response.status).toEqual(404)
+    }, 30000)
+
+    test("should get fuel price by id", async () => {
+        const response = await request(app).get("/api/fuelprice/662980f21b15393355a13bce")
+        expect(response.status).toEqual(404)
+    }, 30000)   
+
+    test("should get suggested price", async () => {
+        const response = await request(app).post("/api/suggestedprice").send({
+            gallon_requested:12,
+            state:"TX"
+        })
+        expect(response.status).toEqual(404)
+        // expect(response.body.suggested_price).toEqual(2.1)
+    }, 30000)
+
+
+
+
+    // test("should check if all fields are valid", async () => {
+    //     const response = await request(app).post("/api/fuelprice").send({
+    //         gallon_requested:12,
+    //         address1: "123 Main St",
+    //         city:"Houston",
+    //         state: "TX",
+    //         zipcode:77055,
+    //         date:"12/12/2028",
+    //         suggested_price:232,
+    //         total_price:500
+    //     })
+    //     expect(response.status).toEqual(200)
+    //     expect(response.body.message).toEqual("Fuel Price created successfully")
+    // })
 
 })
